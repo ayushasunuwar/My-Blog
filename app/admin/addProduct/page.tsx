@@ -8,7 +8,7 @@ import { toast } from "react-toastify"
 
 const page = () => {
 
-    const [image, setImage] = useState<File | null>(null);
+    const [image, setImage] = useState(false);
     const [data, setData] = useState({
             title: "",
             description: "",
@@ -37,7 +37,7 @@ const page = () => {
         const response = await axios.post('/api/blog', formData);
         if(response.data.success){
             toast.success(response.data.message);
-            setImage(null);
+            setImage(false);
             setData({
                 title: "",
                 description: "",

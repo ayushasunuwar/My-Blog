@@ -3,17 +3,26 @@ import { ConnectDb } from "../../../lib/config/db"
 import { writeFile } from "fs/promises";
 import blogModel from "../../../lib/models/blogModel";
 
+
 //db connection
 const LoadDB = async() => {
     await ConnectDb();
 }
 LoadDB();
 
+//API endpoint to get all blogs
 export async function GET(request) {
-    return NextResponse.json({message: "API working"})
-}
+    const blogId = request.nextUrl.searchParams.get("id");
+    if(blogId){
+        const blog = await blogModel.findById(blogId);
+        return NextResponse.json(blog);
+    } else {
+        const blogs = await blogModel.find({});
+        return NextResponse.json({blogs});
+    }
+};
 
-//API for storing Blog data 
+//API endpoint for uploading Blogs
 export async function POST(request){
     //logic to store data in database
     const formData = await request.formData();
@@ -21,6 +30,14 @@ export async function POST(request){
 
     //extract image from formData
     const image = formData.get('image');
+
+    if (!image) {
+    return NextResponse.json(
+        { success: false, message: "Image not provided" },
+        { status: 400 }
+    );
+    }
+
 
     //convert image into bytedata and store in public folder
     const imageByteData = await image.arrayBuffer();

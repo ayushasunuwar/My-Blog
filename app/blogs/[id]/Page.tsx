@@ -5,16 +5,25 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import Footer from '@/components/Footer'
 import Link from 'next/link'
+import axios from 'axios'
 
 
 const Page = () => {
  const params = useParams() // <-- hook to safely get dynamic params
   const [data, setData] = useState<any>(null);
 
+  const fetchBlogData = async() => {
+    const response = await axios.get('/api/blog',{
+      params:{
+        id: params.id
+      }
+    })
+    setData(response.data)
+  }
+
   useEffect(() => {
-    const found = blog_data.find(blog => blog.id === Number(params.id))
-    if (found) setData(found)
-  }, [params.id])
+    fetchBlogData()
+  }, [])
 
   if (!data) return null;
 
@@ -33,7 +42,7 @@ const Page = () => {
 
       <div className="text-center my-24">
         <h1 className='text-2xl sm:text-5xl font-semibold max-w-[700px] mx-auto'>{data.title}</h1>
-        <Image className='mx-auto mt-6 border border-white rounded-full' src={data.author_img} width={60} height={60} alt=''/>
+        <Image className='mx-auto mt-6 border border-white rounded-full' src={data.authorImg} width={60} height={60} alt=''/>
         <p className='mt-1 pb-2 text-lg max-w-[740px] mx-auto'>{data.author}</p>
       </div>
     </div>
