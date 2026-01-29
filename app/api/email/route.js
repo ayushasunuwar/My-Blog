@@ -15,3 +15,14 @@ export async function POST(request){
     await emailModel.create(emailData);
     return NextResponse.json({success: true, message: "Email Subscribed"})
 }
+
+export async function GET(request){
+    const emails = await emailModel.find({});
+    return NextResponse.json({emails});
+}
+
+export async function DELETE(request){
+    const id = await request.nextUrl.searchParams.get('id');
+    await emailModel.findByIdAndDelete(id);
+    return NextResponse.json({success: true, message: "Email Deleted"})
+}
